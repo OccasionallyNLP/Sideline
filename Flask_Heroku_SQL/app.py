@@ -11,7 +11,6 @@ def find_things(input:dict):
     # cnt
     cur.execute('SELECT count(*) FROM LeisureDB')
     cnt = next(iter(cur))[0]
-    print(cnt)
     if cnt == 0:
         data = pd.read_excel('./data/data.xlsx')
         data.rename(columns = {'도로명 기본주소' : '도로명기본주소'}, inplace = True)
@@ -35,17 +34,21 @@ app = Flask(__name__)
  
 @app.route('/')
 def inputTest(facility_type=None, location=None):
-    return render_template('main_0.html', facility_type=facility_type, location=location)
+    return render_template('main_1.html', facility_type=facility_type, location=location)
 
 @app.route('/find',methods=['POST'])
 def find_corps(facility_type=None, location=None):
     if request.method == 'POST':
         facility_type = request.form['facility_type']
         location = request.form['location']
+        if facility_type == 'none':
+            facility_type = None
+        if location == 'none':
+            location = None
     else:
         facility_type = None
         location = None
-    
+        
     response = find_things(dict(시설종목명=facility_type,시도명=location))
     return render_template('main_2.html', data=response)
     
